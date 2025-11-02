@@ -1,0 +1,47 @@
+body {
+  background: #111;
+  color: #eee;
+  font-family: sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+
+.search-box input {
+  padding: 12px;
+  width: 60%;
+  border-radius: 10px;
+  border: none;
+}
+
+.search-box button {
+  padding: 12px 20px;
+  margin-right: 10px;
+  background: #c400ff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+#results {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 10px;
+}
+
+.card {
+  background: #1c1c1c;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.card img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.no-link {
+  color: #ff4444;
+}
