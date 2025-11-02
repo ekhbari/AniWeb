@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>مكتبة الأنمي العربي</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <h1>مكتبة الأنمي العربي</h1>
+
+  <div class="search-box">
+    <input id="searchBox" placeholder="ابحث عن أنمي">
+    <button onclick="startSearch()">بحث</button>
+  </div>
+
+  <div id="results"></div>
+
+  <script>
+    async function startSearch() {
+      const query = document.getElementById("searchBox").value;
+      if (!query.trim()) return;
+
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = "<p>جاري البحث...</p>";
+
+      try {
+        const anilist = await fetch('https://graphql.anilist.co', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            query: `
+            query ($search: String) {
+              Page(perPage: 10) {
+                media(search: $search, type: ANIME) {
+                  title { native romaji }
+                  coverImage { large }
+                  description(asHtml: false)
+                }
+              }
+            }`,
+            variables: { search: query }
+          })
+        }).then(res => res.json());
+
+        const local = await fetch(`/api/search?query=${encodeURIComponent(query)}`).then(r => r.json());
+
+        resultsDiv.innerHTML = "";
+
+        anilist.data.Page.media.forEach(item => {
+          const link = local.find(e => 
+            item.title.romaji.includes(e.title) || 
+            item.title.native.includes(e.title)
+          );
+
+          resultsDiv.innerHTML += `
+            <div class="card">
+              <img src="${item.coverImage.large}">
+              <h3>${item.title.native || item.title.romaji}</h3>
+              <p>${(item.description || "").slice(0, 120)}...</p>
+              ${ link 
+                ? `<a href="${link.url}" target="_blank">مشاهدة الآن</a>` 
+                : `<span class="no-link">⚠️ لا رابط عربي بعد</span>` }
+            </div>
+          `;
+        });
+
+      } catch(err) {
+        resultsDiv.innerHTML = "<p>حدث خطأ في البحث</p>";
+      }
+    }
+  </script>
+
+</body>
+</html>
