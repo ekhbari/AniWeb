@@ -1,0 +1,8 @@
+{
+  "name": "arab-anime",
+  "version": "1.0.0",
+  "dependencies": {
+    "axios": "latest",
+    "cheerio": "latest"
+  }
+}
